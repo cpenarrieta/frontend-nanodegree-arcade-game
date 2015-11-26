@@ -23,7 +23,8 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+		score = document.getElementById("score");;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -57,7 +58,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    }
+    };
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -80,7 +81,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -160,8 +161,32 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        player.x = 100;
+		player.y = 400;
+		player.win = false;
     }
+	
+	function checkCollisions() {
+		allEnemies.forEach(function(enemy) {
+            if(enemy.x - 70 < player.x && enemy.x + 70 > player.x && enemy.y - 60 < player.y && enemy.y + 60 > player.y) {
+				reset();
+				calculateScore(-Math.round(Math.random()*10));
+			} else {
+				updateScore();
+			}
+        });
+	}
+	
+	function updateScore() {
+		if(player.win) {
+			calculateScore(Math.round(Math.random()*10));
+			reset();
+		}
+	}
+	
+	function calculateScore(value) {
+		score.innerHTML = score.innerHTML/1 + value;
+	}
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
